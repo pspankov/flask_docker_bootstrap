@@ -1,0 +1,64 @@
+version: '3.7'
+
+services:
+  web:
+    restart: unless-stopped
+    build: ./web
+    # expose:
+    #   - "8000"
+    ports:
+      - '8000:8000'
+    volumes:
+      - web-data:/usr/src/app/static
+    env_file: 
+      - .env
+    networks:
+      - plight
+    command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+
+  nginx:
+    restart: unless-stopped
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/www/static
+      - web-data:/usr/src/app/static
+    networks:
+      - plight
+  neo4j:
+    image: neo4j:4.0.3
+    hostname: neo4j
+    ports:
+      - '7474:7474'
+      - '7687:7687'
+    volumes:
+      - ./neo4j/plugins:/plugins
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+    environment:
+      NEO4J_AUTH: neo4j/root
+      NEO4J_dbms_logs_debug_level: DEBUG
+    networks:
+      - plight
+  # data:
+  #   image: postgres:latest
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   command: "true"
+
+  # postgres:
+  #   restart: always
+  #   image: postgres:latest
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+networks:
+  dev:
+    driver: bridge
+
+volumes:
+  # db-data:
+  web-data:
