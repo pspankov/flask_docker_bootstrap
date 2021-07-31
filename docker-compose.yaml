@@ -5,10 +5,7 @@ services:
     restart: on-failure
     build:
       context: .
-    # expose:
-    #   - "8000"
     ports:
-      - 8000:8000
       - 5000:5000
     volumes:
       - app-data:/usr/src/app/static
@@ -18,17 +15,7 @@ services:
     networks:
       - dev
     command: python manage.py run -h 0.0.0.0
-
-  # nginx:
-  #   restart: unless-stopped
-  #   build: ./nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - .:/www/static
-  #     - web-data:/usr/src/app/static
-  #   networks:
-  #     - dev
+  
   neo4j:
     image: neo4j:4.0.3
     restart: unless-stopped

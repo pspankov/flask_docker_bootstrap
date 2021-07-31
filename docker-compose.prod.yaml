@@ -14,10 +14,10 @@ services:
       - app-data:/usr/src/app/static
       - .:/usr/src/app/
     env_file:
-      - .env.dev
+      - .env
     networks:
       - dev
-    command: python manage.py run -h 0.0.0.0
+    command: gunicorn --bind 0.0.0.0:5000 manage:app
 
   # nginx:
   #   restart: unless-stopped
